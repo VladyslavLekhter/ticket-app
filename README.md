@@ -1,72 +1,36 @@
-# Spring security part 2
+## About project
+This is a simple ticket app project that was created to show my knowledge of Java, Spring, Hibernate, OOP and Solid principles.
+"Ticket app" is based on a three-tier architecture
+that includes Dao, Service and Controller levels.
+This application is able to process HTTP requests, connect to the database and perform CRUD operations on it.
+Role-based access is also implemented in the application.
+For example, you can register as a user, login to the application and see all available movies or movie-sessions.
+Or you can login as an admin and have ability to manage movies, movie-sessions, users etc.
 
-- Configure DB authentication instead of In memory authentication
-- Add Role entity, Dao and Service layer for it.
-    ```java
-      public interface RoleService {
-          void add(Role role);
-      
-          Role getRoleByName(String roleName);
-      }
-    ```
-
-- Configure role access to specific resources for `ADMIN` and for `USER`.
-  You should configure access to __all endpoints__ in your application. Example:
+## Technologies
+Project is created with:
 ```
-POST: /register - all
-GET: /cinema-halls - user/admin
-POST: /cinema-halls - admin
-GET: /movies - user/admin
-POST: /movies - admin
-GET: /movie-sessions/available - user/admin
-GET: /movie-sessions/{id} - user/admin
-POST: /movie-sessions - admin
-PUT: /movie-sessions/{id} - admin
-DELETE: /movie-sessions/{id} - admin
-GET: /orders - user
-POST: /orders/complete - user
-PUT: /shopping-carts/movie-sessions - user
-GET: /shopping-carts/by-user - user
-GET: /users/by-email - admin
-...
-``` 
-
-HINT:
-- It's up to you what type for RoleName field to choose(String/Enum) but enum would be preferable in most cases.
-- Roles and first Admin user can be injected inside DataInitializer class using annotation @PostConstruct.
-```java
-@PostConstruct
-public void inject() {
-  Role adminRole = new Role();
-  adminRole.setName("ADMIN");
-  roleService.add(adminRole);
-  Role userRole = new Role();
-  userRole.setName("USER");
-  roleService.add(userRole);
-  User user = new User();
-  user.setEmail("admin@i.ua");
-  user.setPassword("admin123");
-  user.setRoles(Set.of(adminRole));
-  userService.add(user);
-}
-```
-- You can specify the different HTTP method access for the same endpoint. For example:
-
-```plainjava
-        protected void configure(HttpSecurity http) throws Exception {
-        http
-                .authorizeRequests()
-                .antMatchers(HttpMethod.POST,"/movies/**").hasRole("ADMIN")
-                .antMatchers(HttpMethod.GET,"/movies/**").permitAll()
-                .anyRequest().authenticated()
-                .and()
-                .formLogin()
-                .permitAll()
-                .and()
-                .httpBasic()
-                .and()
-                .csrf().disable();
-    }
+* Java 11
+* MySQL
+* Hibernate
+* Spring (Spring Web, Spring Security, Spring ORM)
+* Tomcat 9.0.50 (to run app locally)
 ```
 
-__You can check yourself using this__ [checklist](https://mate-academy.github.io/jv-program-common-mistakes/java-spring/security-part-2/jv-spring-security-checklist)
+## How to try it?
+You can run this app locally:
+
+* install MySQL
+* install Tomcat 9.0.50
+* fork this project and clone it
+* add your database info to resources/db.properties
+
+```
+        db.driver=YOUR_DRIVER
+        db.url=YOUR_DATABASE_URL
+        db.user=YOUR_USERNAME
+        db.password=YOUR_PASSWORD
+```
+
+* run this project using Tomcat's local server
+* for sign in you can use default login: admin@gmail.com and password: admin123
